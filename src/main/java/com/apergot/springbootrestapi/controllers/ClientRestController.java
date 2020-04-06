@@ -12,8 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -133,4 +138,28 @@ public class ClientRestController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+    @PostMapping("/clients/upload")
+    public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id){
+        Map<String, Object> map = new HashMap<>();
+        Client client = clientService.findById(id);
+
+        if ( !file.isEmpty()) {
+            String filename = UUID.randomUUID().toString()+ "_" +file.getOriginalFilename().replace(" ", "");
+            Path filePath = Paths.get("uploads").resolve(filename).toAbsolutePath();
+            System.out.println(filePath.toString());
+            try {
+                Files.copy(file.getInputStream(), filePath);
+            } catch (IOException e) {
+                map.put("message", "error while uploading the image");
+                map.put("error", e.getMessage().concat(":").concat(e.getCause().getMessage()));
+                return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            client.setImage(filename);
+            clientService.save(client);
+            map.put("client", client);
+            map.put("message", "image " + filename + " uploaded successfully!");
+        }
+
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
 }
