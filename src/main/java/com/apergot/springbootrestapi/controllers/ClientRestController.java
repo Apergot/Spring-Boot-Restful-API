@@ -1,7 +1,10 @@
 package com.apergot.springbootrestapi.controllers;
 
 import com.apergot.springbootrestapi.models.entity.Client;
+import com.apergot.springbootrestapi.models.services.IUploadFileService;
 import com.apergot.springbootrestapi.models.services.InterfaceClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -35,6 +38,11 @@ public class ClientRestController {
 
     @Autowired
     private InterfaceClientService clientService;
+
+    @Autowired
+    private IUploadFileService uploadFileService;
+
+    private final Logger log = LoggerFactory.getLogger(ClientRestController.class);
 
     @GetMapping("/clients")
     public List<Client> index() {
@@ -134,14 +142,7 @@ public class ClientRestController {
         Map<String, Object> map = new HashMap<>();
         try {
             Client client = clientService.findById(id);
-            String lastImage = client.getImage();
-            if (lastImage != null && lastImage.length() > 0) {
-                Path lastImagePath = Paths.get("uploads").resolve(lastImage).toAbsolutePath();
-                File fileLastImage = lastImagePath.toFile();
-                if (fileLastImage.exists() && fileLastImage.canRead()) {
-                    fileLastImage.delete();
-                }
-            }
+            uploadFileService.remove(client.getImage());
             clientService.delete(id);
         } catch (DataAccessException e) {
             map.put("message", "Error deleting user");
@@ -156,27 +157,16 @@ public class ClientRestController {
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id){
         Map<String, Object> map = new HashMap<>();
         Client client = clientService.findById(id);
-
+        String filename = null;
         if ( !file.isEmpty()) {
-            String filename = UUID.randomUUID().toString()+ "_" +file.getOriginalFilename().replace(" ", "");
-            Path filePath = Paths.get("uploads").resolve(filename).toAbsolutePath();
-            System.out.println(filePath.toString());
             try {
-                Files.copy(file.getInputStream(), filePath);
+                filename = uploadFileService.save(file);
             } catch (IOException e) {
                 map.put("message", "error while uploading the image");
                 map.put("error", e.getMessage().concat(":").concat(e.getCause().getMessage()));
                 return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            String lastImage = client.getImage();
-            if (lastImage != null && lastImage.length() > 0) {
-                Path lastImagePath = Paths.get("uploads").resolve(lastImage).toAbsolutePath();
-                File fileLastImage = lastImagePath.toFile();
-                if (fileLastImage.exists() && fileLastImage.canRead()) {
-                    fileLastImage.delete();
-                }
-            }
+            uploadFileService.remove(client.getImage());
             client.setImage(filename);
             clientService.save(client);
             map.put("client", client);
@@ -188,18 +178,12 @@ public class ClientRestController {
     @GetMapping("/uploads/img/{filename:.+}")
     public ResponseEntity<Resource> showImage(@PathVariable String filename) {
         Map<String, Object> map = new HashMap<>();
-        Path filePath = Paths.get("uploads").resolve(filename).toAbsolutePath();
         Resource resource = null;
         try {
-            resource = new UrlResource(filePath.toUri());
+            resource = uploadFileService.load(filename);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-
-        if (!resource.exists() && !resource.isReadable()) {
-            throw new RuntimeException("Image could not be loaded: " + filename);
-        }
-
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+resource.getFilename()+"\"");
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
