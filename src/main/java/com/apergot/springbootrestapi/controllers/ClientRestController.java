@@ -3,6 +3,7 @@ package com.apergot.springbootrestapi.controllers;
 import com.apergot.springbootrestapi.models.entity.Client;
 import com.apergot.springbootrestapi.models.services.InterfaceClientService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -128,6 +130,15 @@ public class ClientRestController {
     public ResponseEntity<?> delete(@PathVariable Long id){
         Map<String, Object> map = new HashMap<>();
         try {
+            Client client = clientService.findById(id);
+            String lastImage = client.getImage();
+            if (lastImage != null && lastImage.length() > 0) {
+                Path lastImagePath = Paths.get("uploads").resolve(lastImage).toAbsolutePath();
+                File fileLastImage = lastImagePath.toFile();
+                if (fileLastImage.exists() && fileLastImage.canRead()) {
+                    fileLastImage.delete();
+                }
+            }
             clientService.delete(id);
         } catch (DataAccessException e) {
             map.put("message", "Error deleting user");
@@ -154,12 +165,21 @@ public class ClientRestController {
                 map.put("error", e.getMessage().concat(":").concat(e.getCause().getMessage()));
                 return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
             }
+
+            String lastImage = client.getImage();
+            if (lastImage != null && lastImage.length() > 0) {
+                Path lastImagePath = Paths.get("uploads").resolve(lastImage).toAbsolutePath();
+                File fileLastImage = lastImagePath.toFile();
+                if (fileLastImage.exists() && fileLastImage.canRead()) {
+                    fileLastImage.delete();
+                }
+            }
             client.setImage(filename);
             clientService.save(client);
             map.put("client", client);
             map.put("message", "image " + filename + " uploaded successfully!");
         }
-
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
+
 }
