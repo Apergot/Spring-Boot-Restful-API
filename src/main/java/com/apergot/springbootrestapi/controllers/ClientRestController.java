@@ -4,10 +4,12 @@ import com.apergot.springbootrestapi.models.entity.Client;
 import com.apergot.springbootrestapi.models.services.InterfaceClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -182,4 +185,23 @@ public class ClientRestController {
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
 
+    @GetMapping("/uploads/img/{filename:.+}")
+    public ResponseEntity<Resource> showImage(@PathVariable String filename) {
+        Map<String, Object> map = new HashMap<>();
+        Path filePath = Paths.get("uploads").resolve(filename).toAbsolutePath();
+        Resource resource = null;
+        try {
+            resource = new UrlResource(filePath.toUri());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        if (!resource.exists() && !resource.isReadable()) {
+            throw new RuntimeException("Image could not be loaded: " + filename);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+resource.getFilename()+"\"");
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
 }
