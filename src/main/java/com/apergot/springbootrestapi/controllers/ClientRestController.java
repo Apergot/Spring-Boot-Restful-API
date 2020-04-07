@@ -1,6 +1,7 @@
 package com.apergot.springbootrestapi.controllers;
 
 import com.apergot.springbootrestapi.models.entity.Client;
+import com.apergot.springbootrestapi.models.entity.Region;
 import com.apergot.springbootrestapi.models.services.IUploadFileService;
 import com.apergot.springbootrestapi.models.services.InterfaceClientService;
 import org.slf4j.Logger;
@@ -121,6 +122,7 @@ public class ClientRestController {
             currentClient.setLastname(client.getLastname());
             currentClient.setEmail(client.getEmail());
             currentClient.setCreateAt(new Date());
+            currentClient.setRegion(client.getRegion());
             updatedClient = clientService.save(currentClient);
         } catch (DataAccessException e) {
             map.put("message", "Error updating client data");
@@ -182,5 +184,10 @@ public class ClientRestController {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+resource.getFilename()+"\"");
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/clients/regions")
+    public List<Region> getRegions() {
+        return clientService.findAllRegions();
     }
 }

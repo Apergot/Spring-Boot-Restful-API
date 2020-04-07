@@ -2,6 +2,7 @@ package com.apergot.springbootrestapi.models.services;
 
 import com.apergot.springbootrestapi.models.dao.InterfaceClientDao;
 import com.apergot.springbootrestapi.models.entity.Client;
+import com.apergot.springbootrestapi.models.entity.Region;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,5 +45,11 @@ public class ClientServiceImp implements InterfaceClientService {
     @Transactional
     public void delete(Long id) {
         clientDao.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Region> findAllRegions() {
+        return clientDao.findAllRegions();
     }
 }
