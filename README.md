@@ -8,10 +8,6 @@ In case you want to try this project, feel free to download it and remember to g
 
 ### Prerequisites
 
-The whole application is build using Java and Spring Boot as a framework, you will need a JDK (preferably 1.8, this is the one I used) and as an interface to manage relational data JPA, as you might be thinking know, you need and enviromment where you can create a MySQL db to connect with this Restful API.
-
-### Prerequisites
-
 The whole application is build using Java and Spring Boot as a framework, you will need a JDK (preferably 1.8, this is the one I used) and as an interface to manage relational data JPA, as you might be thinking now, you need and enviromment where you can create a MySQL db to connect with this Restful API.
 
 As soon as you clone the repo and try to run it using IntelliJ (seriously, I recommend using this IDE) you will notice file "application.properties" and some other important files are missing, this is because at those files there is some stuff i didn't want to share and I added them to my .gitignore, you can check this file to know which files are left to add in case you want to get a successful run. 
