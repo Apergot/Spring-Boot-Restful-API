@@ -1,60 +1,22 @@
 ﻿# Project Title
 
-One Paragraph of project description goes here
+I have used this project as a fun way of learning Spring Boot during these Coronavirus Days, it is not mean to be used for anything at all, is just an academic project for learning purposes. This is an Restful API which is created to manage a group of clients in a Front-End application, in my case, I used Angular but this is totally irrelevant as a project limitation since a Restful API is being used.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+In case you want to try this project, feel free to download it and remember to give me a little credit if you use it professionally.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+The whole application is build using Java and Spring Boot as a framework, you will need a JDK (preferably 1.8, this is the one I used) and as an interface to manage relational data JPA, as you might be thinking know, you need and enviromment where you can create a MySQL db to connect with this Restful API.
+
+As soon as you clone the repo and try to run it using IntelliJ (seriously, I recommend using this IDE) you will notice file "application.properties" and some other important files are missing, this is because at those files there is some stuff i didn't want to share and I added them to my .gitignore, you can check this file to know which files are left to add in case you want to get a successful run. 
+
+Here you can see an example of how file "application.properties" should be in order to run the application properly:
 
 ```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
 
 ```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
