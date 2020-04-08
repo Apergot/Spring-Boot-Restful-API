@@ -21,6 +21,7 @@ public class User implements Serializable {
     @NotNull(message = "can not be empty")
     @Column(length=60)
     private String password;
+
     private boolean enabled;
 
     @NotNull(message = "can not be empty")
