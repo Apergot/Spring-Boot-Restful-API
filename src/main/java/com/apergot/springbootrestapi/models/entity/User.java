@@ -23,6 +23,11 @@ public class User implements Serializable {
     private String password;
 
     private boolean enabled;
+    private String firstname;
+    private String lastname;
+
+    @Column(unique=true)
+    private String email;
 
     @NotNull(message = "can not be empty")
     @ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
@@ -70,6 +75,29 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
-    private static final long serialVersionUID = 1L;
+    public String getFirstname() {
+        return firstname;
+    }
 
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    private static final long serialVersionUID = 1L;
 }
