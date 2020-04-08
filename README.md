@@ -28,7 +28,7 @@ spring.servlet.multipart.max-request-size=10MB
 ```
 As you can see, in this file all you have to do is setting the database resource and adding some configuration params to make possible some stuff as uploading a large image to the backend and using JPA to manage your persistent data. You really want to let parameters as "logging.level.org.hibernate.SQL=debug" to know what is JPA doing behind the scenes at server reload and "spring.jpa.hibernate.ddl-auto=create-drop" to run, everytime this happens, a SQL script which is supposed to fill our database with dummy data. This SQL script is located on /src/main/resources/import.sql 
 
-Once everything has been set up successfully, you can use Postman to do your own requests.
+Once everything has been set up successfully, you can use Postman to make your own requests.
 
 ## Built With
 
