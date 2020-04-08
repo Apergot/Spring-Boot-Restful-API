@@ -31,3 +31,4 @@ build/
 .vscode/
 src/main/resources/application.properties
 uploads/
+src/main/java/com/apergot/springbootrestapi/auth/JwtConfig.java
