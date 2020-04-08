@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,6 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:4200"})
 @RequestMapping("/api")
 public class ClientRestController {
 
@@ -51,6 +51,7 @@ public class ClientRestController {
         return clientService.findAll(pageable);
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @GetMapping("/clients/{id}")
     public ResponseEntity<?> show(@PathVariable Long id){
         Client client = null;
@@ -69,6 +70,7 @@ public class ClientRestController {
 
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping("/clients")
     public ResponseEntity<?> create(@Valid @RequestBody Client client, BindingResult result) {
 
@@ -96,6 +98,7 @@ public class ClientRestController {
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
 
+    @Secured("ROLE_ADMIN")
     @PutMapping("/clients/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Client client, @PathVariable Long id, BindingResult result) {
 
@@ -134,6 +137,7 @@ public class ClientRestController {
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/clients/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
         Map<String, Object> map = new HashMap<>();
@@ -150,6 +154,7 @@ public class ClientRestController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     @PostMapping("/clients/upload")
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("id") Long id){
         Map<String, Object> map = new HashMap<>();
@@ -186,6 +191,7 @@ public class ClientRestController {
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping("/clients/regions")
     public List<Region> getRegions() {
         return clientService.findAllRegions();
